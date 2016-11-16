@@ -1,73 +1,28 @@
 
 
-//andere Importe
+//Importe f?????????r URL
+
 import java.io.*;
+import java.net.*;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.JsonString;
+import javax.swing.text.Document;
+import javax.json.*;
 
+import org.htmlcleaner.*;
 
-
-
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonParser;
-import javax.swing.text.html.HTMLEditorKit.Parser;
-
-
-
-
-
-
-
-
-
-
-//Importe für URL
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream.PutField;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import org.glassfish.json.JsonParserImpl;
 //JSON importe
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.jsoup.*;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 
 public class IMDBSpider {
   
-
   public IMDBSpider() {
   }
   
@@ -82,10 +37,10 @@ public class IMDBSpider {
    * - First, read a list of 500 movie titles from the JSON file in 'movieListJSON'.
    *
    * - Secondly, for each movie title, perform a web search on IMDB and retrieve
-   * movieâ€™s URL: http://akas.imdb.com/find?q=<MOVIE>&s=tt&ttype=ft
+   * movie???????????????????????????s URL: http://akas.imdb.com/find?q=<MOVIE>&s=tt&ttype=ft
    *
    * - Thirdly, for each movie, extract metadata (actors, budget, description)
-   * from movieâ€™s URL and store to a JSON file in directory 'outputDir':
+   * from movie???????????????????????????s URL and store to a JSON file in directory 'outputDir':
    *    http://www.imdb.com/title/tt0499549/?ref_=fn_al_tt_1 for Avatar - store
    * </pre>
    *
@@ -96,73 +51,51 @@ public class IMDBSpider {
    * @throws IOException
    */
 //TODO 2:  for each movie title, perform a web search on IMDB and retrieve
-   // movieâ€™s URL: http://akas.imdb.com/find?q=<MOVIE>&s=tt&ttype=ft
+   // movies URL: http://akas.imdb.com/find?q=<MOVIE>&s=tt&ttype=ft
 //TODO 3:Thirdly, for each movie, extract metadata (actors, budget, description)
-  // from movieâ€™s URL and store to a JSON file in directory 'outputDir':
+  // from movies URL and store to a JSON file in directory 'outputDir':
   //   http://www.imdb.com/title/tt0499549/?ref_=fn_al_tt_1 for Avatar - store
   
 public void fetchIMDBMovies(String movieListJSON, String outputDir)	
 	throws IOException {
 	// TODO add code here
 	try {
-		 //prüfe ob Datei existiert
-		 File file = new File(movieListJSON);
-		 if(/*file.exists()*/false)throw new FileNotFoundException();
+//		File F = new File(movieListJSON);
+		//TODO: exceptions definieren
+		if(false)throw new FileNotFoundException();
+		if(false)throw new IOException();
+		if(false)throw new ParseException(outputDir, 0);
+
 		//Lese Datei ein und extrahiere StringArray
 		//meine Implementation
-//			JSONParser parser = new JSONParser();
-//		    JSONArray movielist = (JSONArray) parser.parse(new FileReader(movieListJSON));
-//			String[] output = new String[movielist.size()+1];
-//			int output_zeiger=0;
-//			Iterator<JSONObject> iterator = movielist.iterator();
-//			while (iterator.hasNext()) {
-//				String s = (String) iterator.next().toString();
-//				//leider beginnen ab hier schon die Probleme: auf das Stringarray lässt sich nicht ordentlich zugreifen!
-//				if(s.contains(":") && s.contains("}")){
-//					//System.out.println(s.indexOf(":") + ", " + s.indexOf("}"));
-//					//s = s.trim().substring(13,s.length()-3); FUNZT NICHT!!
-//				}
-//				output[output_zeiger] = s/*.substring(s.indexOf(":"), s.indexOf("}"))*/;
-//				output_zeiger++;
-//			}
-//		
-//			//Aus Stringpräsentation des jsonobject den Titel filtern
-//			//TODO: Hier stimmt etwas nicht: Strings können nicht richtig angesprochen werden!
-//			
-//			String K[] = new String[output.length];
-//			//Sonderzeichen rausfiltern und Stringpräsentation des jsonboj in Filmnamen
-//			for(int i=1; i<output.length; i++){
-//				//output[i] = cleanText(output[i]); //TODO: kann auf String nicht zugreifen!
-//				//output[i] = "http://akas.imdb.com/find?q=<"+ output[i]+ ">&s=tt&ttype=ft";
-//				K[i] = (String) output[i].substring(13,output[i].length()-3);
-//				System.out.println(output[i]);
-//				
-//			}
-		//Implementation mithile von MovieReader (hab ich zu spät gesehen ;)) und Jsonparser 
-		//der eine Datei als Stream in Jsonobject umwandeln kann
-			//Klappt nicht (denke ich) JsonObject ml = (JsonObject)  new JsonParserImpl(JsonParser.class.getResourceAsStream(movieListJSON));
-		 	MovieReader MR = new MovieReader();		
-			//movieListJSON:String -> jsonobjekt
-				//file -> String
-				String inhalt = new Scanner(new File(movieListJSON)).useDelimiter("\\Z").next();
-				//String -> jsonarray
-		        JsonReader reader = Json.createReader(new StringReader(inhalt));
-		        JsonArray movies_arr = (JsonArray) reader.readArray();
-		        //jsonarray -> jsonobj??
-		        JsonObject movie_obj = new JsonObject();
-		        
-		        List<String> movielist = MR.getJsonArray(movies, "movie_name");
+			JSONParser parser = new JSONParser();			
 			
-			for(String s: movielist){
-				System.out.println(s);
+		    JSONArray movielist = (JSONArray) parser.parse(new FileReader(movieListJSON));
+			String[] output = new String[movielist.size()+1];
+
+			int output_zeiger=0;
+			Iterator<JSONObject> iterator = movielist.iterator();
+			while (iterator.hasNext()) {
+				String s = (String) iterator.next().toString();
+				//leider beginnen ab hier schon die Probleme: auf das Stringarray l?????????sst sich nicht ordentlich zugreifen!
+				if(s.contains(":") && s.contains("}")){
+					//System.out.println(s.indexOf(":") + ", " + s.indexOf("}"));
+					s = s.trim().substring(s.indexOf(":")+2,s.indexOf("}")-1);
+				}
+				output[output_zeiger] = s/*.substring(s.indexOf(":"), s.indexOf("}"))*/;
+				output_zeiger++;
 			}
 			
-		//Suche Titel und gebe
-//		for(String i: output){
-//			String html = URL_aufrufen(ersterLink(URL_aufrufen(i)));
-//		}
+			for (String s : output) {
+				System.out.println(s);
+			}
+					
+			String html_movies[] = new String[output.length];
 		
-		
+			for(String movies: output){
+				html_movies[movies.indexOf(movies)] =  URL_aufrufen(ersterLink(URL_aufrufen(movies)));
+			}
+			
 	
 	    } 
 	    catch (FileNotFoundException e) {
@@ -185,40 +118,75 @@ public void fetchIMDBMovies(String movieListJSON, String outputDir)
  * @return html string
  */
 public static String URL_aufrufen(String s){
-		s = "http://akas.imdb.com/find?q="+ s + "&s=tt&ttype=ft";
-        URL url;
-        String html="";
-        try {
-            // get URL content
-            url = new URL(s);
-            URLConnection conn = url.openConnection();
-
-            // open the stream and put it into BufferedReader
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String inputLine;
-            while ((inputLine = br.readLine()) != null) {
-                    html += inputLine + "\n";
-            }
-            br.close();
-        
-            
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-		return html;
+		//		s = "http://akas.imdb.com/find?q="+ s + "&s=tt&ttype=ft";
+		//        String html="";
+		//        try {
+		//            // get URL content
+		//           URL url = new URL(s);
+		//            URLConnection conn = url.openConnection();
+		//
+		//            // open the stream and put it into BufferedReader
+		//            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+		//
+		//            String inputLine;
+		//            while ((inputLine = br.readLine()) != null) {
+		//                    html += inputLine + "\n";
+		//            }
+		//            br.close();
+		//        
+		//            System.out.println(html);
+		//        } catch (MalformedURLException e) {
+		//            e.printStackTrace();
+		//        } catch (IOException e) {
+		//            e.printStackTrace();
+		//        }
+//htmlcleaner benutzen
+		//	try{
+		//		if(false)throw new FileNotFoundException();
+		//		if(false)throw new IOException();
+		//		//if(false)throw new ParseException(outputDir, 0);
+		//		HtmlCleaner cleaner = new HtmlCleaner();
+		//		//String urlEncoded = URLEncoder.encode("akas.imdb.com/find?q="+ s + "%22&s=tt&ttype=ft", "UTF8");
+		//		String url2 = "http://akas.imdb.com/find?q=%22"+s+"%22&s=tt&ttype=ft";
+		//		URL url = new URL(url2);
+		//		
+		//		TagNode root = cleaner.clean(url);
+		//		//HtmlCleaner.getInnerHtml(node);
+		//		//root.findElementByName(, isRecursive)
+		//		String html = "<" + root.getName() + ">" + cleaner.getInnerHtml(root) + "</" + root.getName() + ">";
+		//		
+		//		//html.writeToFile(node, "/data/movie.html","UTF-8");
+		//		
+		//		String HREF_XPATH="//table(@class='findList']//td[@class='result_text']/a@href";
+		//		String TITLE_XPATH="//table(@class='findList']//td[@class='result_text']/a/text";
+		//		
+		//	    Object[] movie_href = root.evaluateXPath(TITLE_XPATH);
+		//		
+		//		System.out.println();
+		//	}
+		//		 
+		//	    catch (FileNotFoundException e) {
+		//          e.printStackTrace();
+		//        } 
+		//	    catch (IOException e) {
+		//          e.printStackTrace();
+		//        } 
+		//	    catch (Exception e) {
+		//            e.printStackTrace();
+		//        } 
+		//
+//jsop
+	//String html = "<html><head><title>First parse</title></head>"  + "<body><p>Parsed HTML into a doc.</p></body></html>";
+			org.jsoup.nodes.Document doc = Jsoup.parse(s);
+return "";
 }
 
 /**
- * @param Stringrepräsentation einer HTML
+ * @param Stringrepr?????????sentation einer HTML
  * @return erster Link
  */
 private static String ersterLink(String html){
-	String l1 = html.substring(html.indexOf("primary_photo")+25,html.indexOf("primary_photo")+100);
-	String l2 = l1.substring(0, l1.indexOf("\""));
-	return l2;
+	return "";
 }
 
 /**
@@ -248,13 +216,13 @@ private static Movie extractMetadata(String html){
  /**
   * Hilsroutine zum testen der Hilfsfunktionen
   */
-  public static void test(){
+public static void test(){
 	  //test URL
-	  String movie = "Matrix";
-	  System.out.println(ersterLink(movie));
+	  String movie = "Terminator";
+	  System.out.println(URL_aufrufen(movie));
   }
   
-  public static void main(String argv[]) throws IOException {
+public static void main(String argv[]) throws IOException {
     String moviesPath = "./data/movies.json";
     String outputDir = "./data";
 
@@ -267,8 +235,9 @@ private static Movie extractMetadata(String html){
     }
     
     IMDBSpider sp = new IMDBSpider();
-    sp.fetchIMDBMovies(moviesPath, outputDir);
+    //sp.fetchIMDBMovies(moviesPath, outputDir);
     
-    //test();
+    test();
   }
 }
+
