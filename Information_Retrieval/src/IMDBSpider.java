@@ -8,7 +8,6 @@ import java.text.ParseException;
 import java.util.Iterator;
 
 import javax.json.JsonReader;
-import javax.swing.text.Document;
 import javax.json.*;
 
 import org.htmlcleaner.*;
@@ -19,6 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.jsoup.*;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class IMDBSpider {
@@ -182,15 +183,36 @@ public static String URL_aufrufen(String s){
 			
 	File input=new File("./data/input.html");
 	
-	try
-	{
-		org.jsoup.nodes.Document doc = Jsoup.parse(input,"UTF-8",s);
-	} 
+		//	%%erste Version
+		//try
+		//	{
+		//		System.out.println("Jsoup");
+		//		Document doc = Jsoup.parse(input,"UTF-8","http://akas.imdb.com/title/tt0499549/?ref_=fn_al_tt_1");
+		//		Element content = doc.getElementById("content");
+		//		Elements links =content.getElementsByTag("a");
+		//		for(Element link :links)
+		//		{
+		//			String linkHref= link.attr("href");
+		//			String linkText =link.text();
+		//		}
+		//	} 
+		//	
+		//	
+		//	
+		//	catch (IOException e)
+		//	{
+		//		// TODO Auto-generated catch block
+		//		e.printStackTrace();
+		//	}
+		//	
 	
-	
-	
-	catch (IOException e)
-	{
+	try {
+		Document doc = Jsoup.parse(input,"UTF-8","http://akas.imdb.com/title/tt0499549/?ref_=fn_al_tt_1");
+		
+		Elements name =doc.select("h1[class]");
+		Elements adresse=doc.select("link[rel]");
+		Elements ranking=doc.select("span[itemprop]");
+	} catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
@@ -241,22 +263,22 @@ public static void test(){
 	  System.out.println(URL_aufrufen(movie));
   }
   
-//public static void main(String argv[]) throws IOException {
-//    String moviesPath = "./data/movies.json";
-//    String outputDir = "./data";
-//
-//    if (argv.length == 2) {
-//      moviesPath = argv[0];
-//      outputDir = argv[1];
-//    } else if (argv.length != 0) {
-//      System.out.println("Call with: IMDBSpider.jar <moviesPath> <outputDir>");
-//      System.exit(0);
-//    }
-//    
-//    IMDBSpider sp = new IMDBSpider();
-//    //sp.fetchIMDBMovies(moviesPath, outputDir);
-//    
-//    test();
-//  }
+public static void main(String argv[]) throws IOException {
+    String moviesPath = "./data/movies.json";
+    String outputDir = "./data";
+
+    if (argv.length == 2) {
+      moviesPath = argv[0];
+      outputDir = argv[1];
+    } else if (argv.length != 0) {
+      System.out.println("Call with: IMDBSpider.jar <moviesPath> <outputDir>");
+      System.exit(0);
+    }
+    
+    IMDBSpider sp = new IMDBSpider();
+    //sp.fetchIMDBMovies(moviesPath, outputDir);
+    
+    test();
+  }
 }
 
