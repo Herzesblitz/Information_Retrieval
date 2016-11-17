@@ -1,9 +1,9 @@
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.simple.JSONObject;
 
 @SuppressWarnings("static-method")
 public class IMDBQueries {
@@ -36,6 +36,36 @@ public class IMDBQueries {
           && this.second.equals(((Tuple<?, ?>) obj).second);
     }
   }
+  
+  public List<Tuple> insertionSort(List<Tuple> sortieren){
+	  ArrayList<Tuple> sort=new ArrayList<Tuple>();
+	  Tuple T;
+	  
+		for (int i = 0; i < sortieren.size(); i++) {
+			T = sortieren.get(i);
+			int j = i;
+			while(j>0 && Double.parseDouble((String) sortieren.get(j-1).second) > Double.parseDouble((String) T.second)){
+				sortieren.set(j, sortieren.get(j-1));		
+						//sortieren.get(j-1).second; 
+				j--;
+			}
+			sortieren.set(j, T);
+					
+//					INSERTIONSORT(A)
+//					1 for i â†� 2 to LÃ¤nge(A) do
+//					2      einzusortierender_wert â†� A[i]
+//					3      j â†� i
+//					4      while j > 1 and A[j-1] > einzusortierender_wert do
+//					5           A[j] â†� A[j - 1]
+//					6           j â†� j âˆ’ 1
+//					7      A[j] â†� einzusortierender_wert
+					
+			
+		}
+	
+	return sort;
+	  
+  }
 
   /**
    * All-rounder: Determine all movies in which the director stars as an actor
@@ -47,8 +77,37 @@ public class IMDBQueries {
    */
   public List<Tuple<Movie, String>> queryAllRounder(List<Movie> movies) {
     // TODO Basic Query: insert code here
-    return new ArrayList<>();
+	  //Alle Filme suchen wo Direktor auch actor ist
+      ArrayList<Tuple> arr=new ArrayList<Tuple>();
+	  boolean ueberspringen = false;
+	   for(int m=0; m<movies.size(); m++){
+		   for(int d=0; d<movies.get(m).getDirectorList().size(); d++){
+			   if(ueberspringen){ueberspringen = false; break;}
+			   for(int a=0; a<movies.get(m).getCastList().size(); a++){
+				   if(ueberspringen)break;
+				   String director = movies.get(m).getDirectorList().get(d).toString();
+				   String actor = movies.get(m).getCastList().get(a).toString();
+				   if(director.equals(actor)){
+			    	System.out.println(m);
+				    	Tuple T = null;
+				    	T.first = movies.get(m);
+				    	T.second = movies.get(m).getRatingValue();
+				    	arr.add(T);
+			    	ueberspringen = true;
+			       }
+			   }
+		   }
+	   }
+	   //Filme sortieren
+	  ArrayList<Tuple> sort=(ArrayList<Tuple>) insertionSort(arr);
+	  //return new ArrayList<>();
+	  List<Tuple<Movie, String>> top10 = null;
+	  for(int i=0; i<10;i++){
+		  top10.set(i,sort.get(i)); 
+	  }
+	  return top10;
   }
+
 
   /**
    * Under the Radar: Determine the top ten US-American movies until (including)
@@ -96,7 +155,31 @@ public class IMDBQueries {
    */
   public List<Movie> queryRedPlanet(List<Movie> movies) {
     // TODO Basic Query: insert code here
-    return new ArrayList<>();
+	  
+	  ArrayList<Tuple<Movie,Integer>> Planet=new ArrayList<Tuple<Movie, Integer>>();
+	  for(int i=0;i<movies.size();i++)
+	  {
+		  for(int j=0;j<movies.get(i).getGenreList().size();j++)
+		  { 
+			  if(movies.get(i).getGenreList().get(j)=="Sci-Fi")
+			  {
+				  if(movies.get(i).getDescription().contains("Mars"))
+				  {
+					  Tuple<Movie, Integer> t=null;
+					  t.first=movies.get(i);
+					  t.second=Integer.parseInt(movies.get(i).getYear());
+					  Planet.add(t);
+					  
+				  }
+			  }
+		  }
+		  
+		 
+	  }
+	return movies;
+	  
+	  
+    
   }
 
   /**
@@ -140,7 +223,47 @@ public class IMDBQueries {
    */
   public List<Tuple<String, Integer>> queryWorkHorse(List<Movie> movies) {
     // TODO Impossibly Hard Query: insert code here
-    return new ArrayList<>();
+	  
+	  
+	  
+	  //TODO erstelle Liste mit allen Schauspielern
+	  
+ 	   int maxindex=0;
+	  ArrayList<Tuple> arr2=new ArrayList<Tuple>();
+	  boolean ueberspringen = false;
+	   for(int m=0; m<movies.size(); m++){
+		   for(int d=0; d<movies.get(m).getCastList().size(); d++){
+				for(int i=0;i<=maxindex;i++)
+				{
+					if(arr2.get(i).first==movies.get(m).getCastList().get(d))
+					{
+						int tmp=((int)arr2.get(i).second+1);
+						arr2.get(i).second=(char)tmp;
+					}
+					else
+					{
+						if(arr2.get(i).first==null)
+						{
+							arr2.get(i).first=movies.get(m).getCastList().get(d);
+							maxindex++;
+						}
+					}
+				}
+			        
+			   }
+		   }
+	   
+	   //Filme sortieren
+	  ArrayList<Tuple> sort=(ArrayList<Tuple>) insertionSort(arr2);
+	  //return new ArrayList<>();
+	  List<Tuple<String, Integer>> top10 = null;
+	  for(int i=0; i<10;i++){
+		  top10.add(sort.get(i)); 
+	  }
+	  return top10;
+
+	  
+	  
   }
 
   /**
@@ -188,199 +311,199 @@ public class IMDBQueries {
     return new ArrayList<>();
   }
 
-//
-//  public static void main(String argv[]) throws IOException {
-//    String moviesPath = "./data/movies/";
-//
-//    if (argv.length == 1) {
-//      moviesPath = argv[0];
-//    } else if (argv.length != 0) {
-//      System.out.println("Call with: IMDBQueries.jar <moviesPath>");
-//      System.exit(0);
-//    }
-//
-//    List<Movie> movies = MovieReader.readMoviesFrom(new File(moviesPath));
-//
-//    System.out.println("All-rounder");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<Movie, String>> result = queries.queryAllRounder(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && result.size() == 10) {
-//        for (Tuple<Movie, String> tuple : result) {
-//          System.out.println("\t" + tuple.first.getRatingValue() + "\t"
-//              + tuple.first.getTitle() + "\t" + tuple.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Under the radar");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<Movie, Long>> result = queries.queryUnderTheRadar(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && result.size() <= 10) {
-//        for (Tuple<Movie, Long> tuple : result) {
-//          System.out.println("\t" + tuple.first.getTitle() + "\t"
-//              + tuple.first.getRatingCount() + "\t"
-//              + tuple.first.getRatingValue() + "\t" + tuple.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("The pillars of storytelling");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<Movie, Integer>> result = queries
-//          .queryPillarsOfStorytelling(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && result.size() <= 10) {
-//        for (Tuple<Movie, Integer> tuple : result) {
-//          System.out.println("\t" + tuple.first.getTitle() + "\t"
-//              + tuple.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("The red planet");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Movie> result = queries.queryRedPlanet(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty()) {
-//        for (Movie movie : result) {
-//          System.out.println("\t" + movie.getTitle());
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("ColossalFailure");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Movie> result = queries.queryColossalFailure(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty()) {
-//        for (Movie movie : result) {
-//          System.out.println("\t" + movie.getTitle() + "\t"
-//              + movie.getRatingValue());
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Uncreative writers");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<String, Integer>> result = queries
-//          .queryUncreativeWriters(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && result.size() <= 10) {
-//        for (Tuple<String, Integer> tuple : result) {
-//          System.out.println("\t" + tuple.first + "\t" + tuple.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Workhorse");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<String, Integer>> result = queries.queryWorkHorse(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && result.size() <= 10) {
-//        for (Tuple<String, Integer> actor : result) {
-//          System.out.println("\t" + actor.first + "\t" + actor.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Must see");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Movie> result = queries.queryMustSee(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && !result.isEmpty()) {
-//        for (Movie m : result) {
-//          System.out.println("\t" + m.getYear() + "\t" + m.getRatingValue()
-//              + "\t" + m.getTitle());
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Rotten tomatoes");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Movie> result = queries.queryRottenTomatoes(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty() && !result.isEmpty()) {
-//        for (Movie m : result) {
-//          System.out.println("\t" + m.getYear() + "\t" + m.getRatingValue()
-//              + "\t" + m.getTitle());
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//    }
-//    System.out.println("");
-//
-//    System.out.println("Magic Couples");
-//    {
-//      IMDBQueries queries = new IMDBQueries();
-//      long time = System.currentTimeMillis();
-//      List<Tuple<Tuple<String, String>, Integer>> result = queries
-//          .queryMagicCouple(movies);
-//      System.out.println("Time:" + (System.currentTimeMillis() - time));
-//
-//      if (result != null && !result.isEmpty()) {
-//        for (Tuple<Tuple<String, String>, Integer> tuple : result) {
-//          System.out.println("\t" + tuple.first.first + ":"
-//              + tuple.first.second + "\t" + tuple.second);
-//        }
-//      } else {
-//        System.out.println("Error? Or not implemented?");
-//      }
-//      System.out.println("");
-//
-//    }
-//  }
+
+  public static void main(String argv[]) throws IOException {
+    String moviesPath = "./data/movies/";
+
+    if (argv.length == 1) {
+      moviesPath = argv[0];
+    } else if (argv.length != 0) {
+      System.out.println("Call with: IMDBQueries.jar <moviesPath>");
+      System.exit(0);
+    }
+
+    List<Movie> movies = MovieReader.readMoviesFrom(new File(moviesPath));
+
+    System.out.println("All-rounder");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<Movie, String>> result = queries.queryAllRounder(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && result.size() == 10) {
+        for (Tuple<Movie, String> tuple : result) {
+          System.out.println("\t" + tuple.first.getRatingValue() + "\t"
+              + tuple.first.getTitle() + "\t" + tuple.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Under the radar");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<Movie, Long>> result = queries.queryUnderTheRadar(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && result.size() <= 10) {
+        for (Tuple<Movie, Long> tuple : result) {
+          System.out.println("\t" + tuple.first.getTitle() + "\t"
+              + tuple.first.getRatingCount() + "\t"
+              + tuple.first.getRatingValue() + "\t" + tuple.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("The pillars of storytelling");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<Movie, Integer>> result = queries
+          .queryPillarsOfStorytelling(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && result.size() <= 10) {
+        for (Tuple<Movie, Integer> tuple : result) {
+          System.out.println("\t" + tuple.first.getTitle() + "\t"
+              + tuple.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("The red planet");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Movie> result = queries.queryRedPlanet(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty()) {
+        for (Movie movie : result) {
+          System.out.println("\t" + movie.getTitle());
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("ColossalFailure");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Movie> result = queries.queryColossalFailure(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty()) {
+        for (Movie movie : result) {
+          System.out.println("\t" + movie.getTitle() + "\t"
+              + movie.getRatingValue());
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Uncreative writers");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<String, Integer>> result = queries
+          .queryUncreativeWriters(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && result.size() <= 10) {
+        for (Tuple<String, Integer> tuple : result) {
+          System.out.println("\t" + tuple.first + "\t" + tuple.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Workhorse");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<String, Integer>> result = queries.queryWorkHorse(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && result.size() <= 10) {
+        for (Tuple<String, Integer> actor : result) {
+          System.out.println("\t" + actor.first + "\t" + actor.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Must see");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Movie> result = queries.queryMustSee(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && !result.isEmpty()) {
+        for (Movie m : result) {
+          System.out.println("\t" + m.getYear() + "\t" + m.getRatingValue()
+              + "\t" + m.getTitle());
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Rotten tomatoes");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Movie> result = queries.queryRottenTomatoes(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty() && !result.isEmpty()) {
+        for (Movie m : result) {
+          System.out.println("\t" + m.getYear() + "\t" + m.getRatingValue()
+              + "\t" + m.getTitle());
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+    }
+    System.out.println("");
+
+    System.out.println("Magic Couples");
+    {
+      IMDBQueries queries = new IMDBQueries();
+      long time = System.currentTimeMillis();
+      List<Tuple<Tuple<String, String>, Integer>> result = queries
+          .queryMagicCouple(movies);
+      System.out.println("Time:" + (System.currentTimeMillis() - time));
+
+      if (result != null && !result.isEmpty()) {
+        for (Tuple<Tuple<String, String>, Integer> tuple : result) {
+          System.out.println("\t" + tuple.first.first + ":"
+              + tuple.first.second + "\t" + tuple.second);
+        }
+      } else {
+        System.out.println("Error? Or not implemented?");
+      }
+      System.out.println("");
+
+    }
+  }
 }
