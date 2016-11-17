@@ -5,20 +5,20 @@ import java.util.List;
 
 public class Movie {
 
-  private String title;
-  private String year;
-  private String url;
-  private List<String> genreList = new ArrayList<>();
-  private List<String> countryList = new ArrayList<>();
+  private String title; //
+  private String year; //
+  private String url; //
+  private List<String> genreList = new ArrayList<>(); //
+  private List<String> countryList = new ArrayList<>(); //
   private String description;
-  private String budget;
-  private String gross;
-  private String ratingValue;
-  private String ratingCount;
-  private String duration;
-  private List<String> castList = new ArrayList<>();
-  private List<String> characterList = new ArrayList<>();
-  private List<String> directorList = new ArrayList<>();
+  private String budget; //
+  private String gross; //
+  private String ratingValue; //
+  private String ratingCount; //
+  private String duration; //
+  private List<String> castList = new ArrayList<>(); //
+  private List<String> characterList = new ArrayList<>(); //
+  private List<String> directorList = new ArrayList<>(); //
 
   /**
    * 
