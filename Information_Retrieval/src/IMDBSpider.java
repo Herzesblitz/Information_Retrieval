@@ -342,7 +342,7 @@ public static void gebeFilmAus(Movie M,String Outdir) throws IOException{
 		//+year
 			  ouput.put("Year", M.getYear());
 			  
-				// try-with-resources statement based on post comment below :)
+				// try-with-resources statement based on post comment below  :)
 		  try (FileWriter file = new FileWriter(Outdir)) {
 		  file.write(ouput.toJSONString());
 		  System.out.println("Successfully Copied JSON Object to File...");
